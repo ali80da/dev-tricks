@@ -32,13 +32,67 @@ Error occurred while restoring NuGet packages: The operation failed as details f
 </configuration>
 ```
 ### برای پیدا کردن فایل NuGet.Config در ویندوز این مسیر رو امتحان کنید.
-`
+```
 C:\Users\{UserName}\AppData\Roaming\NuGet
-`
+```
 ### برای مشاهده مستندات ماکروسافت از این لینک استفاده کنید.
-`
-https://learn.microsoft.com/en-us/nuget/consume-packages/configuring-nuget-behavior#how-settings-are-applied
-`
+
+[لینک دستورات کانفیگ NuGet وبسایت ماکروسافت](https://learn.microsoft.com/en-us/nuget/consume-packages/configuring-nuget-behavior#how-settings-are-applied)
+
+<br /><hr /><br />
+
+## استفاده از httpPatch در WebAPI با استفاده از پکیج زیر در دات نت 8
+```
+Microsoft.AspNetCore.Mvc.NewtonsoftJson
+```
+### اول از همه باید این کد در فایل Program.cs اضافه کنیم:
+```csharp
+builder.Services.AddControllers().AddNewtonsoftJson();
+```
+و در ورودی Controller به این شکل اطلاعات دریافت می کنیم:
+```csharp
+[HttpPatch("{userId}")]
+public IActionResult PatchData(string userId, JsonPatchDocument<UpdateUserDataMo> model, CancellationToken cancellation)
+{
+  var user = await GetUserByIdAsync(userId, cancellation);
+  // some codes
+  model.ApplyTo(user, ModelState);
+  return Ok($"کاربر با آیدی: {userId} بروز رسانی شد.");
+}
+```
+
+### و برای استفاده در سرویس به این شکل عمل میکنیم:
+```csharp
+public async Task<UpdateUserResult> PatchUserAync(string userId, JsonPatchDocument<UpdateUserDataMo> model, CancellationToken cancellation)
+{
+    try
+    {
+        var user = await GetUserByIdAsync(userId, cancellation);
+        if (user is null) return UpdateUserResult.NotFound;
+        if (user.IsRemoved || !user.PhoneNumberConfirmed) return UpdateUserResult.NotAccess;
+
+        //UpdateUserDataMo data = new()
+        //{
+
+        //    FirstNameFa = user.FirstNameFa?.SanitizeText(),
+        //    LastNameFa = user.LastNameFa?.SanitizeText()
+        //};
+
+        //model.ApplyTo(data);
+
+        user.LastUpdateTime = DateTime.Now;
+
+        await userRepository.UpdateUserAsync(user.Id, cancellation);
+        return UpdateUserResult.Success;
+    }
+    catch (Exception ex)
+    {
+        throw new Exception($"کاربر با آیدی: {userId} بروز رسانی نشد.", ex);
+        //return UpdateUserResult.Error;
+    }
+}
+```
+
 
 
 
