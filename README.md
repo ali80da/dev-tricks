@@ -93,7 +93,26 @@ public async Task<UpdateUserResult> PatchUserAync(string userId, JsonPatchDocume
 }
 ```
 
+<br /><br />
 
+## اجازه دسترسی به گیت در Terminal برای اضافه کردن کدها و... مخصوصا برای .vs
+### و برای خطا هایی مثل: fatal: adding files failed
+`
+error: open(".vs/ProjectOrSolutionName/FileContentIndex/2b3c3599-****-****-****-285080df9374.vsidx"): Permission denied
+`
+<br /> یــــــــــــــــا <br />
+`
+error: unable to index file '.vs/ProjectOrSolutionName/FileContentIndex/2b3c3599-****-****-****-285080df9374.vsidx'
+`
+### از این دستور استفاده کنید...
+```bash
+icacls .vs/ProjectOrSolutionName/FileContentIndex/77641f5e-****-****-****-e97400316658.vsidx /grant "YourUserName":F
+```
+### و برای بدست آوردن UserName در ویندوز از این دستور استفاده کنید...
+```bash
+whoami
+```
+#### و به بقیه مسیر خود ادامه دهید.
 
 
 
