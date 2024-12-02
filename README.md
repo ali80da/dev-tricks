@@ -169,6 +169,103 @@ Version Control Systems:`سیستم‌های کنترل نسخه مانند Git 
 
 <br /><hr /><br />
 
+# دستورات nginx (وب سرور)
+
+آزمایش و توسعه با NGINX
+از فایل‌های HTML خود در مسیر C:\nginx\html استفاده کنید.
+از NGINX برای Reverse Proxy یا Load Balancer در پروژه‌های توسعه خود بهره ببرید.
+
+اجرای NGINX
+باز کردن Command Prompt یا PowerShell:
+کلیدهای `Win + R` را فشار دهید، `cmd` یا `powershell` را تایپ کنید و Enter را بزنید.
+به مسیر `nginx.exe` بروید:
+
+```Shell
+cd C:\nginx
+```
+با دستور زیر NGINX را اجرا کنید:
+```Shell
+start nginx
+```
+پس از اجرا، NGINX به طور پیش‌فرض روی پورت 80 اجرا می‌شود. برای بررسی، مرورگر خود را باز کنید و به آدرس زیر بروید:
+```Shell
+http://localhost
+```
+شما باید صفحه پیش‌فرض NGINX را مشاهده کنید.
+فایل تنظیمات اصلی NGINX در مسیر ` C:\nginx\conf\nginx.conf` قرار دارد. برای ویرایش تنظیمات:
+
+فایل را با یک ویرایشگر متن مانند Notepad یا VS Code باز کنید.
+```Conf
+worker_processes  1;
+
+events {
+    worker_connections  1024;
+}
+
+http {
+    server {
+        listen       80;
+        server_name  localhost;
+
+        location / {
+            root   html;
+            index  index.html index.htm;
+        }
+    }
+}
+```
+تغییرات دلخواه خود را اعمال کنید (مانند تنظیم پورت یا مسیر فایل‌های استاتیک).
+
+برای اعمال تغییرات، NGINX را ری‌استارت کنید:
+```Shell
+nginx -s reload
+```
+
+پورت 80 در دسترس نیست: اگر پورت 80 قبلاً توسط سرویس دیگری استفاده می‌شود (مثل IIS):
+
+فایل `nginx.conf` را باز کنید و پورت دیگری (مثلاً 8080) را تنظیم کنید:
+```Shell
+listen 8080;
+```
+پس از تغییر، NGINX را ری‌استارت کنید:
+```Shell
+nginx -s reload
+```
+اگر NGINX کار نمی‌کند: برای بررسی خطاها، فایل لاگ‌ها را بررسی کنید:
+```Shell
+C:\nginx\logs\error.log
+```
+برای متوقف کردن کامل NGINX:
+این دستور بلافاصله NGINX را متوقف می‌کند.
+```Shell
+nginx -s stop
+```
+
+و برای توقف آرام:
+این دستور تمام درخواست‌های فعلی را تکمیل کرده و سپس NGINX را متوقف می‌کند.
+```Shell
+nginx -s quit
+```
+
+و یا حتی میتونید از این روش استفاده کنید:
+
+## استفاده از Task Manager
+باز کردن `Task Manager`:
+کلیدهای `Ctrl + Shift + Esc` را فشار دهید یا روی نوار وظیفه راست‌کلیک کرده و Task Manager را باز کنید.
+پیدا کردن فرآیند NGINX:
+به تب `Processes` بروید و فرآیندهای `nginx.exe` را پیدا کنید.
+پایان دادن به فرآیند:
+روی فرآیند NGINX راست‌کلیک کرده و گزینه End Task را انتخاب کنید.
 
 
 
+
+
+
+
+
+
+
+
+
+<br /><hr /><br />
