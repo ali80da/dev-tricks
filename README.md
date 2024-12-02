@@ -255,12 +255,98 @@ nginx -s quit
 پیدا کردن فرآیند NGINX:
 به تب `Processes` بروید و فرآیندهای `nginx.exe` را پیدا کنید.
 پایان دادن به فرآیند:
-روی فرآیند NGINX راست‌کلیک کرده و گزینه End Task را انتخاب کنید.
+روی فرآیند NGINX راست‌ کلیک کرده و گزینه End Task را انتخاب کنید.
 
+<br /><hr /><br />
 
+# استفاده از عکس در Web Api
+### To send a photo to a .NET Web API, the most common approach is to use multipart/form-data. This allows you to send the photo along with any additional data. Below are the steps to send and receive a photo in your .NET Web API.
 
+## Sending the Photo to the API
+When making the request to the API, the client (frontend or another application) should use a `multipart/form-data` format.
 
+Configure Your API to Handle Large Files (Optional)
+To handle large photos, update the Kestrel server limits in your `appsettings.json`:
 
+appsettings.json:
+```json
+{
+  "Kestrel": {
+    "Limits": {
+      "MaxRequestBodySize": 52428800 // 50 MB
+    }
+  }
+}
+```
+
+Enable `multipart/form-data` in Swagger
+## Swagger does not natively infer multipart/form-data from [FromForm]. You need to use the Swagger File Input in the SwaggerGen configuration.
+
+```cs
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "File Upload API", Version = "v1" });
+
+    // Enable support for file uploads in Swagger
+    c.OperationFilter<AddFileUploadOperation>();
+});
+
+// Add custom operation filter for file uploads
+public class AddFileUploadOperation : IOperationFilter
+{
+    public void Apply(OpenApiOperation operation, OperationFilterContext context)
+    {
+        if (operation.OperationId == "UploadFile")
+        {
+            operation.RequestBody = new OpenApiRequestBody
+            {
+                Content = new Dictionary<string, OpenApiMediaType>
+                {
+                    ["multipart/form-data"] = new OpenApiMediaType
+                    {
+                        Schema = new OpenApiSchema
+                        {
+                            Type = "object",
+                            Properties = new Dictionary<string, OpenApiSchema>
+                            {
+                                ["file"] = new OpenApiSchema
+                                {
+                                    Type = "string",
+                                    Format = "binary"
+                                },
+                                ["description"] = new OpenApiSchema
+                                {
+                                    Type = "string"
+                                }
+                            },
+                            Required = new HashSet<string> { "file" }
+                        }
+                    }
+                }
+            };
+        }
+    }
+}
+```
+## Annotate the API Method
+Use Swagger annotations to specify that the method accepts a `multipart/form-data` request:
+
+```cs
+/// <summary>
+/// Upload a file with additional description.
+/// </summary>
+/// <param name="request">The upload request containing the file and description.</param>
+/// <returns>Response with upload details.</returns>
+[HttpPost]
+[Route("upload")]
+[Consumes("multipart/form-data")] // Important for Swagger to recognize file uploads
+[ProducesResponseType(StatusCodes.Status200OK)]
+[ProducesResponseType(StatusCodes.Status400BadRequest)]
+public async Task<IActionResult> UploadFile([FromForm] UploadRequest request)
+{
+    // Method body as shown earlier
+}
+```
 
 
 
