@@ -348,10 +348,64 @@ public async Task<IActionResult> UploadFile([FromForm] UploadRequest request)
 }
 ```
 
+<br /><hr /><br />
 
+# نمونه از لغو عملیات: برای مثال در Controller
 
+```cs
+#region RegisterUserWithPhoneNumber
 
+[CustomSwagger("این اکشن برای ثبت نام کاربر است.")]
+[HttpPost("register-with-phone")]
+[Consumes("application/json")]
+public async Task<IActionResult> RegisterUserWithPhoneNumber(RegisterUserDTO model, CancellationToken cancellation)
+{
+    if (ModelState.IsValid)
+    {
+        try
+        {
+            var res = await authService.RegisterUserWithPhoneNumber(model, cancellation);
 
+            switch (res)
+            {
+                case RegisterUserResult.userExist:
+                    return JsonResponseStatus.SendStatus(JsonResponseStatusType.Warning, "امکان ثبت این شماره تلفن وجود ندارد.", null);
+                case RegisterUserResult.Error:
+                    return JsonResponseStatus.SendStatus(JsonResponseStatusType.Error, "کلمه عبور باید بیشتر از 5 کاراکتر و همچنین حداقل دارای یک کاراکتر یکتا، حرف کوچک و حرف بزرگ باشد.", null);
+                case RegisterUserResult.Success:
+                    return JsonResponseStatus.SendStatus(JsonResponseStatusType.Success, "ثبت نام با موفقیت انجام شد", res);
+            }
+        }
+            // در این قسمت اتفاقی که قرار است در صورت لغو عملیات انجام شود صورت میگیرد.
+        catch (OperationCanceledException)
+        {
+            // عملیات لغو شد
+            return BadRequest(new { success = false, message = "The request was canceled by the client." });
+        }
+        catch (Exception)
+        {
 
+            throw;
+        }
+    }
+    logger.LogError("Error Sending Data");
+    return BadRequest("خطا در ارسال اطلاعات");
+
+}
+
+#endregion
+```
 
 <br /><hr /><br />
+
+
+
+
+
+
+
+
+
+
+
+
