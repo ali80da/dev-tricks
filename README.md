@@ -466,6 +466,24 @@ sudo hostnamectl set-hostname new-hostname
 
 
 
+<br /><hr /><br />
+
+## تعدادی از دستورات لینوکس (ubuntu)
+برای نمایش اطلاعات IP
+```bash
+ip a
+```
+
+برای چک کردن وضعیت فایروال
+```bash
+sudo ufw status
+```
+
+برای نصب پکیج
+```bash
+sudo apt-get install PackageName
+```
+##### لینوکس به حروف کوچیک و بزرگ حساسه
 
 
 
