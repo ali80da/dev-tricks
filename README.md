@@ -504,7 +504,21 @@ nano /etc/netplan/00-installer-config.yaml
 
 <br /><hr /><br />
 
+# ساختار تنظیمات فایل 00-installer-config.yaml
+```yaml
+# This is the network config written by 'subiquity'
+network:
+  ethernets:
+    eth0:
+      dhcp4: false
+      addresses:
+        - 172.17.61.9/20
+    eth1:
+      dhcp4: true
+  version: 2
+  renderer: networkd
 
+```
 
 <br /><hr /><br />
 
