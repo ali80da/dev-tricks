@@ -488,10 +488,31 @@ sudo apt-get install PackageName
 
 
 
+<br /><hr /><br />
+
+## استفاده از دستور ساده `ip a` برای دریافت اطلاعات IP Address و ... در لینوکس (ubuntu)
+```bash
+ip a
+```
+
+<br /><hr /><br />
+
+## برای استفاده از Proxy و ویرایش تنظیمات شبکه ای در لینوکس (ubuntu)
+```bash
+nano /etc/netplan/00-installer-config.yaml
+```
+
+<br /><hr /><br />
 
 
 
 <br /><hr /><br />
+
+
+
+
+
+
 
 
 
