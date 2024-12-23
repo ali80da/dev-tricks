@@ -574,7 +574,7 @@ keytool -genkey -v -keystore {appName}.keystore -alias {keyName} -keyalg RSA -ke
 ```
 
 ### بنا به نسخه های مختلف دات نت - عدد نسخه دات نت تغییر میکنه
-
+## و مسیر قرار گیری فایل APK در bin/Release/net9.0-android
 <br /><hr /><br />
 
 <br /><hr /><br />
