@@ -552,7 +552,29 @@ nameserver 172.30.0.62
 # The nameservers listed below may not be recognized.
 nameserver 172.30.0.53
 ```
+<br /><hr /><br />
 
+## مراحل خروجی APK در Blazor
+```bash
+keytool -genkey -v -keystore {appName}.keystore -alias {keyName} -keyalg RSA -keysize 2048 -validity 10000
+```
+
+### اضافه کردن به فایل XML
+```xml
+<TargetFramework  Condition="'$(Configuration)' == 'Release'">net9.0-android</TargetFramework>
+<AndroidKeyStore>True</AndroidKeyStore>
+<AndroidSigningKeyStore>{appName}.keystore</AndroidSigningKeyStore>
+<AndroidSigningKeyAlias>{keyName}</AndroidSigningKeyAlias>
+<AndroidSigningKeyPass>{P@ssw0rd}</AndroidSigningKeyPass>
+<AndroidSigningStorePass>{P@ssw0rd}</AndroidSigningStorePass>
+```
+### و در مرحله آخر اجرا دستور زیر در cmd
+```bash
+ dotnet publish -f net9.0-android -c Release
+```
+
+### بنا به نسخه های مختلف دات نت - عدد نسخه دات نت تغییر میکنه
 
 <br /><hr /><br />
 
+<br /><hr /><br />
