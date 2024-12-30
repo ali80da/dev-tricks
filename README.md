@@ -577,4 +577,13 @@ keytool -genkey -v -keystore {appName}.keystore -alias {keyName} -keyalg RSA -ke
 ## و مسیر قرار گیری فایل APK در bin/Release/net9.0-android
 <br /><hr /><br />
 
+## استفاده از UseResponseCompression
+```cs
+// Configure the HTTP request pipeline.
+app.UseWhen(context => !context.Request.Path.StartsWithSegments("/_framework"), appBuilder =>
+{
+    appBuilder.UseResponseCompression();
+});
+```
+
 <br /><hr /><br />
