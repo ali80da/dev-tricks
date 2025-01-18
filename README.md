@@ -587,3 +587,68 @@ app.UseWhen(context => !context.Request.Path.StartsWithSegments("/_framework"), 
 ```
 
 <br /><hr /><br />
+
+یکی از راه حل های خطای زیر برای اتصال به دیتابیش در SQL Server Management
+```
+TITLE: Connect to Server
+------------------------------
+
+Cannot connect to ..
+
+------------------------------
+ADDITIONAL INFORMATION:
+
+A network-related or instance-specific error occurred while establishing a connection to SQL Server. The server was not found or was not accessible. Verify that the instance name is correct and that SQL Server is configured to allow remote connections. (provider: Named Pipes Provider, error: 40 - Could not open a connection to SQL Server) (Microsoft SQL Server, Error: 2)
+
+For help, click: https://docs.microsoft.com/sql/relational-databases/errors-events/mssqlserver-2-database-engine-error
+
+------------------------------
+
+The system cannot find the file specified
+
+------------------------------
+BUTTONS:
+
+OK
+------------------------------
+```
+
+اجرا دستور زیر در `win+r` یا تایپ کلمه `run` در search ویندوز:
+
+```bash
+mmc
+```
+
+Save a link to SQL Server Configuration Manager for another computer
+On the Start menu, select Run.
+
+<ul>
+  <ol>In the Open box, type mmc -a (type mmc /32 -a on a 64-bit computer) to open the Microsoft Management Console in author mode.</ol>
+  <ol>On the File menu, select Add/Remove Snap-in.</ol>
+
+  <ol>In the Add/Remove Snap-in window, select Add.</ol>
+
+  <ol>In the Add Standalone Snap-in window, select Computer Management and then select Add.</ol>
+  <ol>In the Computer Management window, select Another computer, type the name of the remote computer you wish to manage, and then select Finish.</ol>
+  <ol>In the Add Standalone Snap-in window, select Close.</ol>
+  <ol>In the Add/Remove Snap-in window, select OK.</ol>
+  <ol>Expand Computer Management (<computer name>), and Services and Applications.</ol>
+  <ol>Right-click SQL Server Configuration Manager, and then select New Window from here.</ol>
+  <ol>On the Window menu, select Console Root, to switch back to the first window, and delete the window.</ol>
+  <ol>On the File menu, select Save As, and save the file in the desired folder, with an appropriate name with the .msc file extension. Close the Microsoft Management Console.</ol>
+  <ol>To open SQL Server Configuration Manager on the target computer, double-click the file. If desired, save a link to the file on the desktop or in the Start menu.</ol>
+
+</ul>
+
+با این کار به صورت Local به دیتابیس دسترسی دارید...
+
+
+
+
+
+
+
+
+
+
+
