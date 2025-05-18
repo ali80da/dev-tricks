@@ -643,6 +643,49 @@ On the Start menu, select Run.
 با این کار به صورت Local به دیتابیس دسترسی دارید...
 
 
+---
+نمونه محتوا فایل برنامه Inno
+```code
+[Setup]
+AppName=YourAppName
+AppVersion=1.0.0
+DefaultDirName={localappdata}\Programs\YourAppName
+DefaultGroupName=Your App Name
+OutputBaseFilename=YourAppNameNasb
+Compression=lzma2
+SolidCompression=yes
+OutputDir="D:\Username\YourAppNameNasb\Nasb"
+
+[Files]
+Source: "D:\Username\YourAppNameSetup\Release\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
+
+[Icons]
+Name: "{group}\Task Man"; Filename: "{app}\YourAppName.exe"
+Name: "{commondesktop}\YourApp Name"; Filename: "{app}\YourAppName.exe"; Tasks: desktopicon
+
+[Tasks]
+Name: "desktopicon"; Description: "Create a &desktop icon"; GroupDescription: "Additional icons:"
+Name: "autostart"; Description: "Start Task Man automatically with Windows"; GroupDescription: "Startup options:"
+
+[Registry]
+; Adds app to Windows startup if autostart is selected
+Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; \
+    ValueType: string; ValueName: "YourAppName"; \
+    ValueData: """{app}\YourAppName.exe"""; Flags: uninsdeletevalue; Tasks: autostart
+
+```
+
+و توضیحاتی درباره برنامه Inno
+
+
+
+
+
+
+
+
+
+
 
 
 
