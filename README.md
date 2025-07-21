@@ -678,7 +678,25 @@ Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; \
 و توضیحاتی درباره برنامه Inno
 
 
+---
 
+## خواندن لاگ زنده با grep، یک Pattern (الگوی خاص)
+
+1. چند عبارت با grep -E (Extended regex):
+```bash
+tail -f /var/log/syslog | grep -E "ERROR|WARNING|CRITICAL"
+```
+`فقط لاگ‌هایی را نمایش می‌دهد که یکی از این کلمات را دارند: ERROR یا WARNING یا CRITICAL`
+
+2. استفاده از grep -i برای غیرحساس بودن به حروف بزرگ/کوچک:
+```bash
+tail -f /var/log/syslog | grep -iE "error|fail|timeout"
+```
+
+3. برجسته کردن نتایج با رنگ (برای خوانایی بهتر):
+```bash
+tail -f /var/log/syslog | grep --color=always -E "ERROR|FAIL|CRITICAL"
+```
 
 
 
