@@ -699,6 +699,28 @@ tail -f /var/log/syslog | grep --color=always -E "ERROR|FAIL|CRITICAL"
 ```
 
 
+---
+### زمانی که از جایی داریم ریپو مگیریم که پسوند .git نداره و یا فایل ها کامل دریافت نمیشن
+:: مطمئن شو ریموت درست ست شده
+```bash
+git remote set-url origin route-address
+```
+```bash
+git fetch origin
+```
+:: برنچ api را مستقیماً از روی origin/api بساز (با tracking خودکار)
+```bash
+git checkout -b api origin/api
+```
+
+:: Pull امن (فقط fast-forward)
+```bash
+git pull --ff-only
+```
+
+
+
+
 
 
 
