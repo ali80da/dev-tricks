@@ -856,8 +856,24 @@ tail -f logfile.txt | grep "error"
 | `-C n` | n خط قبل و بعد |
 
 
+---
 
+## ساخت پکیج NuGet (.nupkg)
+### آماده‌سازی پروژه (.csproj)
 
+```bash
+<PropertyGroup>
+  <TargetFramework>net8.0</TargetFramework>
+  <PackageId>Library</PackageId>
+  <Version>1.0.0</Version>
+  <Authors>Ali</Authors>
+  <Company>Com</Company>
+  <Description>Custom NuGet Package</Description>
+  <RepositoryUrl>https://github.com/...</RepositoryUrl>
+  <PackageLicenseExpression>License</PackageLicenseExpression>
+</PropertyGroup>
+
+```
 
 
 
