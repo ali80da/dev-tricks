@@ -858,22 +858,178 @@ tail -f logfile.txt | grep "error"
 
 ---
 
-## ساخت پکیج NuGet (.nupkg)
-### آماده‌سازی پروژه (.csproj)
+
+# ساخت پکیج NuGet (`.nupkg`)
+
+این راهنما مراحل ساخت و مصرف داخلی یک پکیج NuGet را تا مرحله استفاده لوکال پوشش می‌دهد.
+
+---
+
+## 1) آماده‌سازی پروژه (`csproj.`)
+
+برای اینکه خروجی قابل‌انتشار بسازیم، متادیتای پکیج را در فایل پروژه اضافه کن:
+
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+
+    <!-- هویت پکیج -->
+    <PackageId>PackLib</PackageId>
+    <Version>1.0.0</Version> <!-- یا PackageVersion -->
+
+    <!-- اطلاعات نمایشی -->
+    <Authors>Ali</Authors>
+    <Company>Com</Company>
+    <Description>Custom NuGet Package</Description>
+    <PackageTags>utilities;dotnet</PackageTags>
+
+    <!-- اختیاری ولی توصیه‌شده -->
+    <RepositoryUrl>https://github.com/YourOrg/YourRepo</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/YourOrg/YourRepo</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression> <!-- یا PackageLicenseFile -->
+    <RepositoryType>git</RepositoryType>
+
+    <!-- اگر XML docs می‌خواهی -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+</Project>
+```
+
+نکات مهم:
+- مهم: **Version** را با سیاست نسخه‌بندی (Major.Minor.Patch) جلو ببر.
+- اگر چند فریم‌ورک را هدف می‌گیری:  
+  `<TargetFrameworks>net8.0;net6.0</TargetFrameworks>`
+- اگر فایل‌های non-code (مثل `.json`, `.config`) باید داخل پکیج باشند، آن‌ها را با `Content` و `Pack="true"` علامت‌گذاری کن:
+  
+  ```xml
+  <ItemGroup>
+    <Content Include="content\**\*.*" Pack="true" PackagePath="contentFiles\any\any\" />
+  </ItemGroup>
+  ```
+
+---
+
+## 2) ساخت پکیج با CLI
+
+داخل ریشه‌ی پروژه اجرا کن:
 
 ```bash
-<PropertyGroup>
-  <TargetFramework>net8.0</TargetFramework>
-  <PackageId>Library</PackageId>
-  <Version>1.0.0</Version>
-  <Authors>Ali</Authors>
-  <Company>Com</Company>
-  <Description>Custom NuGet Package</Description>
-  <RepositoryUrl>https://github.com/...</RepositoryUrl>
-  <PackageLicenseExpression>License</PackageLicenseExpression>
-</PropertyGroup>
+dotnet pack -c Release -o ./nupkgs
+```
+
+- خروجی `.nupkg` در مسیر `./nupkgs` قرار می‌گیرد (مثلاً `PackLib.1.0.0.nupkg`).
+- اگر قبلاً Build کرده‌ای و فقط پکیج می‌خواهی:
+
+  ```bash
+  dotnet pack --no-build -c Release -o ./nupkgs
+  ```
+
+گزینه‌های مفید (اختیاری):
+- نکته: **Symbols + SourceLink** (به‌درد دیباگ می‌خورد):
+  
+  ```bash
+  dotnet pack -c Release -o ./nupkgs ^
+    -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:IncludeSource=true
+  ```
+- مهم: **Override نسخه از خط فرمان**:
+  
+  ```bash
+  dotnet pack -c Release -o ./nupkgs -p:PackageVersion=1.0.1
+  ```
+
+تأیید خروجی:
+- بررسی کن فایل‌های `*.nupkg` (و در صورت فعال‌بودن، `*.snupkg`) در پوشه‌ی `./nupkgs` ساخته شده باشند.
+- می‌توانی محتویات پکیج را با تغییر پسوند به `.zip` و بازکردن آن بررسی کنی.
+
+---
+
+## 3) مصرف داخلی (Local Feed)
+
+### روش A: سورس لوکال از مسیر پوشه
+این روش سریع‌ترین راه برای تست پکیج در همان ماشین است.
+
+1) مسیر خروجی پکیج را به عنوان سورس اضافه کن:
+```bash
+dotnet nuget add source ./nupkgs -n LocalFeed
+```
+
+2) در پروژهٔ مصرف‌کننده، پکیج را اضافه کن:
+```bash
+dotnet add package PackLib --version 1.0.0 --source LocalFeed
+```
+
+3) در صورت نیاز، سورس‌های فعلی را ببین:
+```bash
+dotnet nuget list source
+```
+
+> نکته: اگر نمی‌خواهی سورس اضافه کنی، می‌توانی مستقیماً به مسیر اشاره کنی:
+
+> ```bash
+> dotnet add package PackLib --version 1.0.0 --source ./nupkgs
+> ```
+
+---
+
+### روش B: تعریف دائمی در `NuGet.Config` (اختیاری برای تیم)
+اگر می‌خواهی کل تیم به یک پوشهٔ مشترک روی شبکه دسترسی داشته باشند، مسیر شبکه را به `NuGet.Config` اضافه کن:
+
+نمونه `NuGet.Config` (کاربر ویندوز):
 
 ```
+%AppData%\NuGet\NuGet.Config
+```
+
+افزودن سورس پوشهٔ شبکه (مثال):
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <packageSources>
+    <add key="LocalFeed" value="\\fileserver\NuGetFeed" />
+  </packageSources>
+</configuration>
+```
+
+سپس فقط کافی است در پروژهٔ مصرف‌کننده بگویی:
+
+```bash
+dotnet add package PackLib -v 1.0.0
+```
+
+> توجه: اگر در تنظیمات عمومی ریپو‌تان سورس‌های دیگری را غیرفعال کرده‌اید (مثل `nuget.org`)، مطمئن شوید سورس LocalFeed فعال است و دسترسی به مسیر شبکه برقرار باشد.
+
+---
+
+### عیب‌یابی کوتاه (داخلی)
+- **پکیج پیدا نمی‌شود**: نسخه‌ی دقیق (`version--`) را چک کن؛ همچنین `dotnet nuget list source` را بزن تا مطمئن شوی سورس درست اضافه شده و فعال است.
+- **کَش NuGet**: گاهی پاک‌کردن کش کمک می‌کند:
+
+  ```bash
+  dotnet nuget locals all --clear
+  ```
+- **چند نسخه نصب شده**: اگر نسخهٔ دیگری از پکیج نصب است، با `version--` دقیق نصب کن یا نسخهٔ قبلی را حذف/آپدیت کن.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
